@@ -80,5 +80,32 @@ public class Database {
 		}
 		return null;
 	}
+	
+	public ArrayList<Cotizacion> generarConsulta(FiltroConsultaCuenta unFiltro){
+		
+		ArrayList<Cotizacion> resultados = new ArrayList<Cotizacion>();
+		
+		for(Cotizacion unaCotizacion : cotizaciones){
+			
+			Empresa empresa = unaCotizacion.getEmpresa();
+			Cuenta cuenta = unaCotizacion.getCuenta();
+			int anio = unaCotizacion.getAnio();
+			double valor = unaCotizacion.getValor();
+			
+			if(empresa.getNombreEmpresa().equals(unFiltro.getEmpresa()) || unFiltro.getEmpresa().equals("Todos")){
+				if(cuenta.getNombre().equals(unFiltro.getCuenta()) || unFiltro.getCuenta().equals("Todos")){
+					if(Integer.toString(anio).equals(unFiltro.getAnio()) || unFiltro.getAnio().equals("Todos")){
+						
+						resultados.add(new Cotizacion(empresa,cuenta,anio,valor));
+					
+					}
+				}
+			}
+
+		}
+		
+		return resultados;
+		
+	}
 
 }

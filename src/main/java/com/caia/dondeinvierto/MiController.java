@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.caia.dondeinvierto.auxiliar.ParserCSV;
 import com.caia.dondeinvierto.forms.*;
+import com.caia.dondeinvierto.models.Cotizacion;
 import com.caia.dondeinvierto.models.Database;
+import com.caia.dondeinvierto.models.FiltroConsultaCuenta;
 import com.caia.dondeinvierto.models.Indicador;
 import com.caia.dondeinvierto.models.Usuario;
 
@@ -415,14 +419,29 @@ public class MiController {
 		} else {
 			
 			Usuario usuario = (Usuario) session.getAttribute("usuario");
+			
+			Database database = (Database) session.getAttribute("database");
 				
 			model.setViewName("consultarCuenta");
-			model.addObject("usuario",usuario);
-			
+			model.addObject("database", database);
+			model.addObject("empresas",database.getEmpresas());
+			model.addObject("cuentas", database.getCuentas());
+			model.addObject("anios",database.getAnios());
 		}
 		
 		return model;
 		
+	}
+	
+	@RequestMapping(value="generarConsultaCuenta", method=RequestMethod.POST)
+	public ModelAndView generarConsulta(HttpSession session,FiltroConsultaCuenta unFiltro){
+		Database database = (Database) session.getAttribute("database");
+		ArrayList<Cotizacion> resultados = database.generarConsulta(unFiltro);
+		ModelAndView model = new ModelAndView();
+		model.setViewName("consultarCuenta");
+		model.addObject("resultados", resultados);
+		model.addObject("command", new FiltroConsultaCuenta());
+		return model;
 	}
 	
 	@RequestMapping(value="consultarIndicador", method={RequestMethod.GET})
